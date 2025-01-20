@@ -131,8 +131,8 @@
             const text = document.getElementById("text").value;
             const language = document.getElementById("language").value;
 
-            const subscriptionKey = "9BRtQ0UtG6Dl1EZE6mTehnpQzI9UH7sJ1WiDrE87STsbZRHD42CTJQQJ99BAACGhslBXJ3w3AAAbACOGodBt"; // Replace with your Azure Translator key
-            const endpoint = "https://api.cognitive.microsofttranslator.com/"; // Replace with your Azure Translator endpoint
+            const subscriptionKey = "G16MfBxBU1Zt7HqPc5hmAUYI4uDd95b1nhdgPV8bDCkU6Evet2bLJQQJ99BAACGhslBXJ3w3AAAbACOGc6rW"; // Provided Azure Translator key
+            const endpoint = "https://api.cognitive.microsofttranslator.com/"; // Provided Azure Translator endpoint
 
             const url = `${endpoint}/translate?api-version=3.0&to=${language}`;
 
@@ -159,7 +159,20 @@
 
                 // Speak the translated text
                 const utterance = new SpeechSynthesisUtterance(translatedText);
-                utterance.lang = language; // Set the language of the speech
+                
+                // Set language for regional Indian languages
+                const availableVoices = speechSynthesis.getVoices();
+                const targetLang = language === 'hi' ? 'hi-IN' : language; // Set default to Hindi for 'hi' code
+
+                const selectedVoice = availableVoices.find(voice => voice.lang === targetLang);
+                
+                if (selectedVoice) {
+                    utterance.voice = selectedVoice;
+                } else {
+                    console.warn(`No voice found for language code ${targetLang}`);
+                }
+
+                utterance.lang = targetLang; // Set the language of the speech
                 speechSynthesis.speak(utterance);
             } catch (error) {
                 console.error(error);
